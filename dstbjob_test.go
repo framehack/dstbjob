@@ -7,24 +7,11 @@ import (
 	"github.com/go-redis/redis/v8"
 )
 
-type logger struct {
-	t *testing.T
-}
-
-func (l *logger) Debugf(f string, args ...interface{}) {
-	l.t.Logf(f, args...)
-}
-
-func (l *logger) Errorf(f string, args ...interface{}) {
-	l.t.Logf(f, args...)
-}
-
 func TestJob(t *testing.T) {
 	r := redis.NewClient(&redis.Options{
 		Addr: "localhost:6379",
 	})
 	count := 0
-	l := &logger{t}
 	stop := make(chan struct{}, 1)
 	stopat := 5
 	interval := 1
@@ -33,7 +20,7 @@ func TestJob(t *testing.T) {
 	j, err := NewDSTBJob(Config{
 		SystemName: "test",
 		Node:       "n1",
-	}, r, l)
+	}, r)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -62,7 +49,7 @@ func TestJob(t *testing.T) {
 		j2, err := NewDSTBJob(Config{
 			SystemName: "test",
 			Node:       "n2",
-		}, r, l)
+		}, r)
 		if err != nil {
 			errs <- err
 		}
