@@ -76,7 +76,11 @@ func (s *DSTBJob) AddFunc(name, spec string, cmd func()) (cron.EntryID, error) {
 		s.log.Debugf("%s start\n", logpref)
 		err := mutex.Lock()
 		if err != nil {
-			s.log.Errorf("%s lock err: %v\n", logpref, err)
+			if err == redsync.ErrFailed {
+				s.log.Debugf("%v\n", err)
+			} else {
+				s.log.Errorf("%s lock err: %v\n", logpref, err)
+			}
 			return
 		}
 		s.log.Debugf("%s get lock\n", logpref)
